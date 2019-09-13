@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<!-- 
+NOTE:   
+We are using the annotations approach and hence no need to use the domain 
+hibernate mapping files. Provided here as merely a refrence.
+-->
+<hibernate-mapping default-lazy="false">
+     <class name="com.library.model.domain.CD" table="cd" catalog="sys">
+        <id name="idCD" type="java.lang.Integer">
+            <column name="idCD" />
+            <generator class="increment"></generator>            
+        </id>
+        <property name="cdTitle" type="java.lang.String">
+            <column name="cdTitle" length="45" />
+        </property>
+        <property name="cdArtist" type="java.lang.String">
+            <column name="cdArtist" length="45" />
+        </property>
+        <property name="releaseYear" type="java.lang.Integer">
+            <column name="releaseYear" />
+        </property>
+        <property name="availibility" type="java.lang.Integer">
+            <column name="availibility" />
+        </property>
+        <property name="returnDate" type="java.util.Date">
+            <column name="returnDate" />
+        </property>
+        <property name="catalogNumber" type="java.lang.String">
+            <column name="catalogNumber" length="45" />
+        </property>
+
+    </class>
+</hibernate-mapping>

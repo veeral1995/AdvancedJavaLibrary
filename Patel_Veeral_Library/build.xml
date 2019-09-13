@@ -1,0 +1,126 @@
+<?xml version="1.0"?>
+
+<!--
+Library Ant Build.xml file
+-->
+
+<project name="Library" basedir=".">
+	<property name="src.dir" value="${basedir}/src"/>
+	<property name="bin.dir" value="${basedir}/classes"/>
+	<property name="build.dir" value="${basedir}/build"/>
+	<property name="config.dir" value="${basedir}/config"/>
+        <property name="test.dir" value="${basedir}/test"/>
+	<property name="lib.dir" value="${basedir}/lib"/>
+        <property name="prop.dir" value="${basedir}/config"/>
+        
+	
+ <!-- Classpath for the project -->	
+        <path id="master-classpath">
+            <fileset dir="${lib.dir}">
+                <include name="**/*.jar"/>
+            </fileset>
+        </path>
+        
+        <path id="classpath.project.ref">
+    <fileset dir="${lib.dir}" >
+      <include name="**/*.jar" />
+      <include name="**/*.zip" />
+    </fileset >
+  </path>
+
+ <!-- Cleanup and Dir Creation -->	
+        <target name="clean" description="Deletes old and creates new classes, and build directories.">
+            <delete dir="${bin.dir}"/>
+            <mkdir dir ="${bin.dir}"/>
+            <delete dir="${build.dir}"/>
+            <mkdir dir ="${build.dir}"/>
+        </target>
+	
+ <!-- Compiling Code -->	
+ 	<target name="compile" description="Compiles code" depends="clean">
+            <javac srcdir="${src.dir}" destdir="${build.dir}" >
+                <classpath>
+                    <path refid="classpath.project.ref" />
+                </classpath>
+            </javac>
+	</target>
+ 
+ <!-- Build Jar -->	
+	<target name="buildjar" depends="compile">
+		<jar jarfile="${build.dir}/dest/Library.jar">
+			<fileset dir="${basedir}">
+				<include name="config/*"/>
+			</fileset>
+			<fileset dir="${bin.dir}">
+			    <include name="**/*.class"/>
+			</fileset>
+			<manifest>
+			    <attribute name="Main-Class" value="com.library.view.ViewDriver"/>
+		    </manifest>
+		</jar>
+		
+  <!-- Copy the config folder over to the build folder: application needs this to load properties file-->
+		<copy todir="${build.dir}">
+			<fileset dir="${basedir}">
+				<include name="config*/**/*"/>
+			</fileset>
+                </copy>
+	</target>
+        
+    <!-- ===================================================================
+       Runs Test Driver
+       =================================================================== -->
+  <target name="run" depends="compile">
+       <java classname="com.library.server.LibraryServer" fork="yes" maxmemory="640m">
+         <classpath>
+           <path location="${build.dir}" />
+           <path refid="classpath.project.ref" />
+         </classpath>
+         <sysproperty key="prop_location" value="${prop.dir}application.properties"/>
+         <jvmarg value="-Xrs"/>
+       </java>
+  </target>
+  
+  
+        <target name="test" depends="compile">
+            <junit>
+                <sysproperty key="prop_location" value="${prop.dir}application.properties"/>
+                <sysproperty key="log4jprop_location" value="${prop.dir}/log4j.properties"/>
+                <classpath>
+                    <pathelement location="lib/junit-4.13-beta-3.jar"/>
+                </classpath>    
+                <batchtest>
+                    <fileset dir="${test.dir}" includes="ApplicationTestSuite.java" />      
+                </batchtest>
+                <formatter type="brief" usefile="false"/>
+            </junit>
+        </target>   
+        
+        <target name="test-single" depends="compile">
+            <junit>
+                <sysproperty key="prop_location" value="${prop.dir}/application.properties"/>
+                <sysproperty key="log4jprop_location" value="${prop.dir}/log4j.properties"/>
+                <classpath>
+                    <pathelement location="bin" />    
+                    <pathelement location="lib/junit-4.13-beta-3.jar"/>
+                    <pathelement location="lib/hamcrest-all-1.3.jar"/>
+                </classpath>    
+                <batchtest>
+                    <fileset dir="${test.dir}" includes="ApplicationTestSuite.java" />      
+                </batchtest>
+                <formatter type="brief" usefile="false"/>
+            </junit>
+        </target>  
+	
+ <!-- Execute Jar -->	
+	<target name="runTest" depends="buildjar">
+            <java jar="${build.dir}/dest/Library.jar" fork="yes" maxmemory="640m" dir=".">
+                <classpath>
+                    <path location="${build.dir}" />
+                    <path refid="classpath.project.ref" />
+                </classpath>
+                <sysproperty key="prop_location" value="${build.dir}/config/application.properties"/>
+                <sysproperty key="prop_location" value="${build.dir}/config/log4j.properties"/>
+            </java>	       
+	</target>
+</project>

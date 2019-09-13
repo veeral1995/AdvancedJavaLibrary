@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+	<xs:complexType name="jdbctype">
+		<xs:all>
+			<xs:element name="url" type="xs:string"/>
+			<xs:element name="user" type="xs:string"/>
+			<xs:element name="password" type="xs:string"/>
+		</xs:all>
+	</xs:complexType>
+	<xs:complexType name="servicetype">
+		<xs:all>
+			<xs:element name="interface" type="xs:string"/>
+			<xs:element name="implementation" type="xs:string"/>
+		</xs:all>
+	</xs:complexType>
+	<xs:complexType name="servicemappingtype">
+		<xs:sequence>
+			<xs:element ref="service" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:element name="applicationproperties">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="jdbc"/>
+				<xs:element ref="servicemapping"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="jdbc" type="jdbctype"/>
+	<xs:element name="service" type="servicetype"/>
+	<xs:element name="servicemapping" type="servicemappingtype"/>
+</xs:schema>
